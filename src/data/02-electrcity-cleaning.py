@@ -55,3 +55,5 @@ target_electricity_df = electricity_df[target_codes]
 target_electricity_df = target_electricity_df.rename(columns=code_to_english)
 
 target_electricity_df.to_csv(os.path.join(PROCESSED_FOLDER, "target_electricity_dataframe.csv"))
+
+print('Save to target_electricity_dataframe.csv successfully!')

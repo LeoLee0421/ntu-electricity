@@ -110,7 +110,7 @@ for current_date in tqdm(dates, desc="Processing dates"):
 
         # Separate room and capacity（泛化版本）
         first_col = df.columns[0]
-        df[['room', 'capacity']] = df[first_col].str.extract(r'(\D+\d+)\s*(\d+)人')
+        df[['room', 'capacity']] = df[first_col].str.extract(r'^(.*?)\s*(\d+)\s*人$')
         df = df.dropna(subset=['room', 'capacity'])
         df['capacity'] = df['capacity'].astype(int)
 
@@ -125,8 +125,8 @@ for current_date in tqdm(dates, desc="Processing dates"):
         for col in cols:
             parts = str(col).split()
 
-            if col == "capacity":
-                continue
+            #if col == "capacity":
+            #    continue
 
             if len(parts) == 3:
                 start, end, period = parts
@@ -134,7 +134,7 @@ for current_date in tqdm(dates, desc="Processing dates"):
             else:
                 new_cols.append(col)
 
-        df = df.drop(columns=["capacity"], errors="ignore")
+        #df = df.drop(columns=["capacity"], errors="ignore")
         df.columns = new_cols
 
         # Save RAW ================================================================
@@ -160,7 +160,10 @@ for building, en_name in BUILDING_MAP.items():
 
         df = pd.read_csv(file)
         df = df.set_index('room')
+        capacity_col = df["capacity"]
+        df = df.drop(columns=["capacity"], errors="ignore")
         df_binary = df.notna().astype(int)
+        df_binary.insert(0, "capacity", capacity_col)
 
         date_part = os.path.basename(file).split("_")[-1]
 
