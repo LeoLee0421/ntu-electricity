@@ -1,6 +1,6 @@
-data/raw/
-data/processed/putong-timetable-binary/
-data/processed/zonghe-timetable-binary/
-data/processed/boya-timetable-binary/
-data/processed/xinsheng-timetable-binary/
-data/processed/gongtong-timetable-binary/
+#data/raw/
+#data/processed/putong-timetable-binary/
+#data/processed/zonghe-timetable-binary/
+#data/processed/boya-timetable-binary/
+#data/processed/xinsheng-timetable-binary/
+#data/processed/gongtong-timetable-binary/
