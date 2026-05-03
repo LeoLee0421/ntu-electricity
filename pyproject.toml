@@ -7,10 +7,14 @@ requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.14.3",
     "html5lib>=1.1",
+    "linearregression>=0.0.1",
     "lxml>=6.1.0",
     "matplotlib>=3.10.9",
     "numpy>=2.4.4",
     "pandas>=3.0.2",
     "requests>=2.33.1",
+    "scikit-learn>=1.8.0",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.6",
     "tqdm>=4.67.3",
 ]
