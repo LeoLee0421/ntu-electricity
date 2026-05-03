@@ -19,8 +19,8 @@ import statsmodels.api as sm
 
 # Set paths ------------------------------------------------------------------------------------
 WORK_DIR = os.getcwd()
-PROCESSED_FOLDER = os.path.join(WORK_DIR, "data", "processed")
-RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "daytime")
+PROCESSED_FOLDER = os.path.join(WORK_DIR, "data", "processed", "alltime")
+RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "alltime")
 
 # 建築對應（中文 → 英文）
 BUILDING_MAP = {
@@ -38,27 +38,21 @@ BUILDING_MAP = {
 results_list = []
 
 # Define semester periods based on user comments
-#train_period_1 = ('2024-09-02', '2024-12-20')
-#train_period_2 = ('2025-02-24', '2025-06-06')
-train_period_2 = ('2025-09-01', '2025-12-19')
+train_period_1 = ('2024-09-02', '2024-12-20')
+#train_period_2 = ('2024-09-02', '2024-12-20')
+train_period_2 = ('2025-02-24', '2025-06-06')
+#train_period_2 = ('2025-09-01', '2025-12-19')
 test_period = ('2025-09-01', '2025-12-19')
-
-# Define daytime periods (1-10)
-daytime_periods = [str(i) for i in range(1, 11)]
 
 for ch_name, en_name in BUILDING_MAP.items():
     
     # Load data
-    file_path = os.path.join(PROCESSED_FOLDER, f"{en_name}_final_combined.csv")
+    file_path = os.path.join(PROCESSED_FOLDER, f"{en_name}_final_combined_alltime.csv")
     if not os.path.exists(file_path):
         continue
         
     df = pd.read_csv(file_path)
     df['DateTime'] = pd.to_datetime(df['DateTime'])
-
-    # --- 新增限制：過濾 Period 僅保留 1 到 10 ---
-    # 確保 Period 欄位為字串型態後進行比對
-    #df = df[df['Period'].astype(str).isin(daytime_periods)].copy()
 
     # Split dataset
     # Training set: First two semesters
@@ -73,7 +67,7 @@ for ch_name, en_name in BUILDING_MAP.items():
     df_test = df[test_mask].copy()
 
     if df_train.empty or df_test.empty:
-        print(f"Warning: Insufficient data for {en_name} after daytime filtering, skipping.")
+        print(f"Warning: Insufficient data for {en_name}, skipping.")
         continue
 
     # Training
@@ -83,6 +77,7 @@ for ch_name, en_name in BUILDING_MAP.items():
     
     # Fit OLS model using statsmodels
     res = sm.OLS(y_train, X_train).fit()
+    print(res.summary())
 
     # Save data: Coefficients, Standard Errors, and R-squared
     for feature in ['const'] + features:
@@ -102,7 +97,6 @@ for ch_name, en_name in BUILDING_MAP.items():
     # Instead of plotting, save the comparison as a table
     prediction_df = pd.DataFrame({
         'DateTime': df_test['DateTime'],
-        'Period': df_test['Period'], # 新增 Period 資訊方便核對
         'Actual_Electricity': y_test,
         'Predicted_Electricity': y_pred,
         'Residual': y_test - y_pred
@@ -115,6 +109,8 @@ for ch_name, en_name in BUILDING_MAP.items():
 
 # Final output: Summary CSV
 results_df = pd.DataFrame(results_list)
-results_df.to_csv(os.path.join(RESULT_FOLDER, "114-1_subset.csv"), index=False)
+results_df.to_csv(os.path.join(RESULT_FOLDER, "regression_results_alltime_1132.csv"), index=False)
 
-print("\nProcess completed successfully with Daytime (Period 1-10) filter.")
+print("\nProcess completed successfully.")
+print("1. Statistical summary saved to regression_results_alltime_1132.csv")
+print("2. Individual building test predictions saved to separate CSV files.")

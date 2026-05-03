@@ -30,6 +30,8 @@ def classify_capacity(cap):
     if cap > 200:  return "BigC"
     elif cap > 100: return "MediumC"
     else:           return "SmallC"
+    
+all_building_inventory = []
 
 for building, en_name in BUILDING_MAP.items():
     
@@ -80,5 +82,16 @@ for building, en_name in BUILDING_MAP.items():
 
         save_name = f"{en_name}_timetable_summary.csv"
         final_df.to_csv(os.path.join(PROCESSED_FOLDER, save_name), index=False)
+        
+        room_list = df[['room', 'capacity', 'cap_group']].drop_duplicates()
+        room_list['building'] = building
+        all_building_inventory.append(room_list)
+
+if all_building_inventory:
+    inventory_df = pd.concat(all_building_inventory, ignore_index=True)
+    inventory_df = inventory_df[['building', 'room', 'capacity', 'cap_group']]
+    inventory_df.columns = ['建築', '教室編號', '容納人數', '類型']
+    inventory_df.to_csv(os.path.join(PROCESSED_FOLDER, "all_buildings_room_list.csv"), index=False, encoding='utf-8-sig')
+    print("教室清單已生成：all_buildings_room_list.csv")
 
 print("Done!")
