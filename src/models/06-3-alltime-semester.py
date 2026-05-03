@@ -20,7 +20,7 @@ import statsmodels.api as sm
 # Set paths ------------------------------------------------------------------------------------
 WORK_DIR = os.getcwd()
 PROCESSED_FOLDER = os.path.join(WORK_DIR, "data", "processed", "alltime")
-RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "alltime")
+RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "alltime-semester")
 
 # 建築對應（中文 → 英文）
 BUILDING_MAP = {
@@ -38,10 +38,10 @@ BUILDING_MAP = {
 results_list = []
 
 # Define semester periods based on user comments
-train_period_1 = ('2024-09-02', '2024-12-20')
 #train_period_2 = ('2024-09-02', '2024-12-20')
-train_period_2 = ('2025-02-24', '2025-06-06')
-#train_period_2 = ('2025-09-01', '2025-12-19')
+#train_period_2 = ('2025-02-24', '2025-06-06')
+train_period_2 = ('2025-09-01', '2025-12-19')
+
 test_period = ('2025-09-01', '2025-12-19')
 
 for ch_name, en_name in BUILDING_MAP.items():
@@ -103,14 +103,14 @@ for ch_name, en_name in BUILDING_MAP.items():
     })
     
     # Save test prediction comparison CSV
-    pred_filename = f"{en_name}_test_prediction_comparison.csv"
+    pred_filename = f"{en_name}_test_prediction_comparison_alltime_1131.csv"
     #prediction_df.to_csv(os.path.join(RESULT_FOLDER, pred_filename), index=False)
     #print(f"Saved prediction table for {ch_name}: {pred_filename}")
 
 # Final output: Summary CSV
 results_df = pd.DataFrame(results_list)
-results_df.to_csv(os.path.join(RESULT_FOLDER, "regression_results_alltime_1132.csv"), index=False)
+results_df.to_csv(os.path.join(RESULT_FOLDER, "regression_results_alltime_1141.csv"), index=False)
 
 print("\nProcess completed successfully.")
-print("1. Statistical summary saved to regression_results_alltime_1132.csv")
+print("1. Statistical summary saved to regression_results_alltime_1141.csv")
 print("2. Individual building test predictions saved to separate CSV files.")

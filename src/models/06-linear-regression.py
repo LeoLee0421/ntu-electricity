@@ -20,7 +20,7 @@ import statsmodels.api as sm
 # Set paths ------------------------------------------------------------------------------------
 WORK_DIR = os.getcwd()
 PROCESSED_FOLDER = os.path.join(WORK_DIR, "data", "processed")
-RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results")
+RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "classtime")
 
 # 建築對應（中文 → 英文）
 BUILDING_MAP = {
