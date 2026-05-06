@@ -8,3 +8,14 @@
 6. 可以加上非線性項目當作 fitting
 7. 加上Prob.可能放假
 8. 有些課在課表上，但實際上是沒有上課，去用係數模擬
+
+### 0506 討論結果
+1. Project Structure
+    - Intro
+    - Data Source
+    - Main Result
+    - Survey Overview
+    - Survey Side Result
+2. 算出大教室的用電狀況（可以只分大小教室）
+3. 考慮建築物：普通、新生、共同
+4. 利用問卷資料計算翹課浪費掉多少電
