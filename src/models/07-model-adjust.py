@@ -44,8 +44,9 @@ os.makedirs(PLOT_FOLDER, exist_ok=True)
 
 # 建築對應與國定假日
 BUILDING_MAP = {"普通": "putong", "新生": "xinsheng", "共同": "gongtong"}
-NTU_HOLIDAYS = ["2024-09-17", "2024-10-10", "2024-11-22", "2025-02-28", "2025-04-03", 
-                "2025-04-04", "2025-05-30", "2025-09-29", "2025-10-06", "2025-10-24", "2025-11-21"] 
+NTU_HOLIDAYS = ["2024-09-17", "2024-10-02", "2024-10-03", "2024-10-04", "2024-10-10", "2024-10-31", "2024-11-22", 
+                "2025-02-28", "2025-04-03", "2025-04-04", "2025-05-30", 
+                "2025-09-29", "2025-10-06", "2025-10-10", "2025-10-24", "2025-11-21"] 
 
 # Define semester periods ----------------------------------------------------------------------
 train_period_1 = ('2024-09-02', '2024-12-20')
@@ -131,7 +132,10 @@ COLORS = {
 results_list = []
 pred_dict = {}
 
-print("Running in PURE CLASS-TIME mode (Training, Prediction, and Plots).\n")
+# 將字串列表轉換為 Timestamp 格式，方便後續比對
+holiday_timestamps = pd.to_datetime(NTU_HOLIDAYS).normalize()
+
+print("Running in PURE CLASS-TIME mode (Excluding Holidays from Train/Test).\n")
 
 for ch_name, en_name in BUILDING_MAP.items():
     file_path = os.path.join(PROCESSED_FOLDER, f"{en_name}_final_combined_alltime.csv")
@@ -139,17 +143,28 @@ for ch_name, en_name in BUILDING_MAP.items():
 
     df = pd.read_csv(file_path)
     df['DateTime'] = pd.to_datetime(df['DateTime'])
+    
+    # 新增：建立一個「非假日」的 Mask
+    # 使用 normalize() 確保只比對日期部分
+    is_not_holiday = ~df['DateTime'].dt.normalize().isin(holiday_timestamps)
 
-    # --- 定義 Semester Mask ---
-    train_mask = (((df['DateTime'] >= '2024-09-02') & (df['DateTime'] <= '2024-12-20')) |
-                  ((df['DateTime'] >= '2025-02-24') & (df['DateTime'] <= '2025-06-06')))
-    test_mask = (df['DateTime'] >= '2025-09-01') & (df['DateTime'] <= '2025-12-19')
+    # --- 修改後的 Semester Mask (加入非假日條件) ---
+    train_mask = (
+        ((df['DateTime'] >= '2024-09-02') & (df['DateTime'] <= '2024-12-20')) |
+        ((df['DateTime'] >= '2025-02-24') & (df['DateTime'] <= '2025-06-06'))
+    ) & is_not_holiday
 
-    # 強制只使用 Period 非空的資料 (排除假日、深夜、課間空檔)
+    test_mask = (
+        (df['DateTime'] >= '2025-09-01') & (df['DateTime'] <= '2025-12-19')
+    ) & is_not_holiday
+
+    # 強制只使用 Period 非空且非假日的資料
     df_train = df[train_mask & df['Period'].notna()].copy().reset_index(drop=True)
     df_test = df[test_mask & df['Period'].notna()].copy().reset_index(drop=True)
 
-    if df_train.empty or df_test.empty: continue
+    if df_train.empty or df_test.empty: 
+        print(f"Skipping {en_name}: No data after holiday filtering.")
+        continue
 
     y_train = df_train["Electricity"]
     y_test = df_test["Electricity"]
@@ -180,6 +195,10 @@ for ch_name, en_name in BUILDING_MAP.items():
                 'Residual': (y_test - y_pred).values,
             })
             pred_dict[(en_name, model_name)] = prediction_df
+            
+            pred_filename = f"{en_name}_{model_name}_test_prediction.csv"
+            prediction_df.to_csv(os.path.join(RESULT_FOLDER, pred_filename), index=False)
+            print(f"Saved prediction CSV: {pred_filename}")     
 
         except Exception as e:
             print(f"Error in {model_name} for {en_name}: {e}")
@@ -279,4 +298,47 @@ for ch_name, en_name in BUILDING_MAP.items():
     fig2.savefig(sc_path, dpi=150, bbox_inches='tight')
     plt.close(fig2)
 
-print("\n處理完成！結果已儲存至 adjust_classtime 資料夾。")
+
+results_df = pd.DataFrame(results_list)
+
+if not results_df.empty:
+    # 1. 建立模型適配度摘要 (Model Fit Stats)
+    # 提取每個模型唯一的 R2 和 N_train (不隨變數改變)
+    model_stats = results_df[['Building', 'Model', 'R2', 'N_train']].drop_duplicates()
+    
+    # 轉為寬表格：列為 Building，欄為不同模型的統計量
+    model_stats_wide = model_stats.pivot(
+        index='Building', 
+        columns='Model', 
+        values=['R2', 'N_train']
+    )
+    # 重整欄位名稱，例如：model1_baseline_R2
+    model_stats_wide.columns = [f"{mod}_{stat}" for stat, mod in model_stats_wide.columns]
+    model_stats_wide = model_stats_wide.reset_index()
+    
+    stats_path = os.path.join(RESULT_FOLDER, "regression_model_stats.csv")
+    model_stats_wide.to_csv(stats_path, index=False)
+    print(f"1. Model fit stats saved to: {stats_path}")
+
+    # 2. 建立係數摘要 (Coefficient Summary)
+    # 轉為寬表格：列為 Building + Variable，欄為不同模型的 Coef
+    coef_wide = results_df.pivot(
+        index=['Building', 'Variable'], 
+        columns='Model', 
+        values='Coef'
+    )
+    
+    # 根據原本 MODELS 的順序對欄位進行排序 (若模型有產出的話)
+    existing_models = [m['name'] for m in MODELS if m['name'] in coef_wide.columns]
+    coef_wide = coef_wide[existing_models]
+    
+    # 重新命名欄位增加辨識度
+    coef_wide.columns = [f"{col}_Coef" for col in coef_wide.columns]
+    coef_wide = coef_wide.reset_index()
+    
+    summary_path = os.path.join(RESULT_FOLDER, "regression_results_summary.csv")
+    coef_wide.to_csv(summary_path, index=False)
+    print(f"2. Coefficient summary saved to: {summary_path}")
+
+print(f"3. Plots saved to: {PLOT_FOLDER}")
+print("\nProcess completed successfully.")
