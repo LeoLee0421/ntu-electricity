@@ -26,11 +26,15 @@ BUILDING_MAP = {
 
 # Classifying ------------------------------------------------------------------------------------
 
+#def classify_capacity(cap):
+#    if cap > 200:  return "BigC"
+#    elif cap > 100: return "MediumC"
+#    else:           return "SmallC"
+
 def classify_capacity(cap):
-    if cap > 200:  return "BigC"
-    elif cap > 100: return "MediumC"
-    else:           return "SmallC"
-    
+    if cap >= 150:  return "BigC"
+    else:           return "SmallC"    
+
 all_building_inventory = []
 
 for building, en_name in BUILDING_MAP.items():

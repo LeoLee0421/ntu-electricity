@@ -19,8 +19,8 @@ PROCESSED_FOLDER = os.path.join(WORK_DIR, "data", "processed")
 # 建築對應（中文 → 英文）
 BUILDING_MAP = {
     "普通": "putong",
-    "綜合": "zonghe",
-    "博雅": "boya",
+    #"綜合": "zonghe",
+    #"博雅": "boya",
     "新生": "xinsheng",
     "共同": "gongtong"
 }
@@ -45,6 +45,7 @@ hour_to_period = {
 }
 
 electricity_data['Period'] = electricity_data['Hour_Str'].map(hour_to_period)
+electricity_data.loc[electricity_data['DoW'] > 5, 'Period'] = np.nan
 
 
 # ECombine dataset ------------------------------------------------------------------------------------

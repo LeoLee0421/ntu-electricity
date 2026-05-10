@@ -25,8 +25,8 @@ RESULT_FOLDER = os.path.join(WORK_DIR, "data", "results", "classtime")
 # 建築對應（中文 → 英文）
 BUILDING_MAP = {
     "普通": "putong",
-    "綜合": "zonghe",
-    "博雅": "boya",
+    #"綜合": "zonghe",
+    #"博雅": "boya",
     "新生": "xinsheng",
     "共同": "gongtong"
 }
