@@ -55,7 +55,7 @@ for zh_name, en_name in BUILDING_MAP.items():
     print(f"正在整合 {en_name} 的數據...")
 
     # Classroom data
-    schedule_path = os.path.join(PROCESSED_FOLDER, f"{en_name}_timetable_summary.csv")
+    schedule_path = os.path.join(PROCESSED_FOLDER, "timetable-summary", f"{en_name}_timetable_summary.csv")
     schedule_df = pd.read_csv(schedule_path)
     schedule_df['Time'] = schedule_df['Time'].astype(str)
     
@@ -73,14 +73,14 @@ for zh_name, en_name in BUILDING_MAP.items():
     
     df_merged = pd.merge(
         df_building, 
-        schedule_df[['Date', 'Time', 'BigC', 'MediumC', 'SmallC']], 
+        schedule_df[['Date', 'Time', 'BigC', 'SmallC']], 
         left_on=['Date_Str', 'Period'], 
         right_on=['Date', 'Time'], 
         how='left'
     ).drop(columns=['Date', 'Date_Str', 'Time'])
 
     # Post-processing
-    df_merged[['BigC', 'MediumC', 'SmallC']] = df_merged[['BigC', 'MediumC', 'SmallC']].fillna(0)
+    df_merged[['BigC', 'SmallC']] = df_merged[['BigC', 'SmallC']].fillna(0)
     df_merged = df_merged.rename(columns={en_name: 'Electricity'})
     df_merged = df_merged.dropna(subset=['Electricity'])
     

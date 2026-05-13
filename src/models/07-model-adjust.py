@@ -157,6 +157,11 @@ for ch_name, en_name in BUILDING_MAP.items():
     test_mask = (
         (df['DateTime'] >= '2025-09-01') & (df['DateTime'] <= '2025-12-19')
     ) & is_not_holiday
+    
+    if en_name == "putong":
+        bad_data_mask = (df['DateTime'] >= '2025-09-01') & (df['DateTime'] <= '2025-10-31')
+        test_mask = test_mask & (~bad_data_mask)
+        print(f"Applying data cleaning for {en_name}: Excluded 2025-09 to 2025-10 from test set.")
 
     # 強制只使用 Period 非空且非假日的資料
     df_train = df[train_mask & df['Period'].notna()].copy().reset_index(drop=True)
