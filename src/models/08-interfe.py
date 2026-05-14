@@ -27,7 +27,6 @@ BIGC_MAX = {'putong': 4, 'xinsheng': 3, 'gongtong': 3}
 def build_features(df):
     df = df.copy()
     df['Temp_c']          = df['Temp'] - 25
-    df['Temp2']           = df['Temp'] ** 2
     df['Temp_c_x_BigC']   = df['Temp_c'] * df['BigC']
     df['Temp_c_x_SmallC'] = df['Temp_c'] * df['SmallC']
     df['month']           = df['DateTime'].dt.month
