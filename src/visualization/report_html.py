@@ -118,15 +118,15 @@ HTML = f"""<!DOCTYPE html>
 <style>
   /* ── Design System ── */
   :root {{
-    --bg       : #0f1117;
-    --surface  : #1a1d27;
-    --surface2 : #22263a;
-    --border   : #2e3350;
-    --accent   : #4ade80;
-    --accent2  : #60a5fa;
-    --accent3  : #fb923c;
-    --text     : #e2e8f0;
-    --muted    : #64748b;
+    --bg       : #0d0a14;
+    --surface  : #1a1427;
+    --surface2 : #231933;
+    --border   : #3f2060;
+    --accent   : #e6922b;
+    --accent2  : #9d94c0;
+    --accent3  : #fedfb2;
+    --text     : #f0ece8;
+    --muted    : #9d94c0;
     --danger   : #f87171;
     --font-head: 'Georgia', 'Noto Serif TC', serif;
     --font-body: 'Helvetica Neue', 'PingFang TC', sans-serif;
@@ -143,7 +143,7 @@ HTML = f"""<!DOCTYPE html>
 
   /* ── Header ── */
   .hero {{
-    background: linear-gradient(135deg, #0f1117 0%, #1a1d27 50%, #0d1f0f 100%);
+    background: linear-gradient(135deg, #0d0a14 0%, #1a1427 50%, #3f1163 100%);
     border-bottom: 1px solid var(--border);
     padding: 48px 40px 36px;
     position: relative;
@@ -152,7 +152,7 @@ HTML = f"""<!DOCTYPE html>
   .hero::before {{
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 70% 50%, rgba(74,222,128,.07) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 70% 50%, rgba(63,17,99,.2) 0%, transparent 60%);
   }}
   .hero-label {{
     font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
@@ -170,9 +170,9 @@ HTML = f"""<!DOCTYPE html>
     padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 600;
     letter-spacing: .5px; border: 1px solid;
   }}
-  .badge-green {{ background: rgba(74,222,128,.1); color: var(--accent); border-color: rgba(74,222,128,.3); }}
-  .badge-blue  {{ background: rgba(96,165,250,.1); color: var(--accent2); border-color: rgba(96,165,250,.3); }}
-  .badge-org   {{ background: rgba(251,146,60,.1);  color: var(--accent3); border-color: rgba(251,146,60,.3); }}
+  .badge-green {{ background: rgba(230,146,43,.1); color: var(--accent); border-color: rgba(230,146,43,.3); }}
+  .badge-blue  {{ background: rgba(157,148,192,.1); color: var(--accent2); border-color: rgba(157,148,192,.3); }}
+  .badge-org   {{ background: rgba(254,223,178,.1);  color: var(--accent3); border-color: rgba(254,223,178,.3); }}
 
   /* ── Nav ── */
   nav {{
@@ -206,7 +206,7 @@ HTML = f"""<!DOCTYPE html>
     font-size: 13px; font-weight: 600; transition: all .2s; font-family: inherit;
   }}
   .tab-btn.active, .tab-btn:hover {{
-    background: var(--accent); color: #000; border-color: var(--accent);
+    background: var(--accent); color: #fff; border-color: var(--accent);
   }}
   .tab-panel {{ display: none; }}
   .tab-panel.active {{ display: block; }}
@@ -279,8 +279,8 @@ HTML = f"""<!DOCTYPE html>
 
   /* ── Scenario ── */
   .scenario-hero {{
-    background: linear-gradient(135deg, rgba(74,222,128,.06), rgba(96,165,250,.06));
-    border: 1px solid rgba(74,222,128,.2);
+    background: linear-gradient(135deg, rgba(63,17,99,.1), rgba(230,146,43,.06));
+    border: 1px solid rgba(230,146,43,.25);
     border-radius: 16px; padding: 28px 32px; margin-bottom: 28px;
     text-align: center;
   }}
@@ -410,7 +410,7 @@ HTML = f"""<!DOCTYPE html>
 <!-- 5. SCENARIO -->
 <!-- ══════════════════════════════════════════════════════ -->
 <section id="scenario">
-  <div class="section-title">情境模擬：少開大教室可以省多少？</div>
+  <div class="section-title">情境模擬：少開大教室節電效益</div>
   <div class="section-sub">基於模型係數推算，關閉 N 間大教室在測試學期的預期節電效益</div>
   <div class="tabs" id="scen-tabs"></div>
   <div id="scen-panels"></div>
@@ -420,8 +420,7 @@ HTML = f"""<!DOCTYPE html>
 
 <footer>
   本報告由 <strong>generate_report.py</strong> 自動生成 ·
-  模型：OLS + 交乘項 + 月份/時段固定效應 ·
-  電費換算：NT$ {ELECTRICITY_PRICE_NTD}/kWh
+  模型：OLS + 交乘項 + 月份/時段固定效應
 </footer>
 
 <!-- ════════════ JavaScript ════════════ -->
@@ -432,12 +431,12 @@ const CH = {{}};
 BUILDINGS.forEach(k => CH[k] = DATA[k].ch);
 
 const C = {{
-  actual  : '#94a3b8',
-  pred    : '#4ade80',
-  resid   : '#fb923c',
-  scatter : '#60a5fa',
-  grid    : 'rgba(46,51,80,.6)',
-  tick    : '#64748b',
+  actual  : '#9d94c0',
+  pred    : '#e6922b',
+  resid   : '#fedfb2',
+  scatter : '#9d94c0',
+  grid    : 'rgba(63,17,99,.4)',
+  tick    : '#9d94c0',
 }};
 
 Chart.defaults.color = C.tick;
@@ -474,9 +473,9 @@ function makeTabs(containerId, panelId, keys, labelFn, contentFn, activeCls='act
 }}
 
 function r2Color(v) {{
-  if (v >= 0.9) return '#4ade80';
-  if (v >= 0.75) return '#60a5fa';
-  return '#fb923c';
+  if (v >= 0.9) return '#e6922b';
+  if (v >= 0.75) return '#9d94c0';
+  return '#fedfb2';
 }}
 
 /* ══════════ 0. OVERVIEW ══════════ */
@@ -489,15 +488,15 @@ function r2Color(v) {{
     const rows = [
       ['In-sample R²',    m.r2_in.toFixed(3),   r2Color(m.r2_in)],
       ['OOS R²',          m.r2_oos.toFixed(3),   r2Color(m.r2_oos)],
-      ['RMSE (訓練)',      m.rmse_in.toFixed(2) + ' kWh', '#94a3b8'],
-      ['RMSE (測試)',      m.rmse_oos.toFixed(2) + ' kWh', '#94a3b8'],
-      ['訓練筆數',         m.n_train.toLocaleString(), '#94a3b8'],
-      ['測試筆數',         m.n_test.toLocaleString(),  '#94a3b8'],
+      ['RMSE (訓練)',      m.rmse_in.toFixed(2) + ' kWh', '#9d94c0'],
+      ['RMSE (測試)',      m.rmse_oos.toFixed(2) + ' kWh', '#9d94c0'],
+      ['訓練筆數',         m.n_train.toLocaleString(), '#9d94c0'],
+      ['測試筆數',         m.n_test.toLocaleString(),  '#9d94c0'],
     ];
     const partialBanner = d.is_partial
-      ? `<div style="background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.35);
+      ? `<div style="background:rgba(230,146,43,.12);border:1px solid rgba(230,146,43,.35);
                      border-radius:8px;padding:8px 12px;margin-bottom:12px;
-                     font-size:11px;color:#fb923c;line-height:1.5">
+                     font-size:11px;color:#e6922b;line-height:1.5">
            ⚠ 測試資料僅含 11–12 月<br>（9–10 月因資料品質已排除）
          </div>`
       : '';
@@ -551,8 +550,8 @@ BUILDINGS.forEach(en => {{
       datasets: [{{
         label: '數值',
         data: [m.r2_in, m.r2_oos, m.rmse_in/10, m.rmse_oos/10],
-        backgroundColor: ['#4ade8088','#4ade8088','#60a5fa88','#fb923c88'],
-        borderColor:     ['#4ade80',  '#4ade80',  '#60a5fa',  '#fb923c'],
+        backgroundColor: ['#3f116388','#e6922b88','#9d94c088','#fedfb288'],
+        borderColor:     ['#3f1163',  '#e6922b',  '#9d94c0',  '#fedfb2'],
         borderWidth: 1.5, borderRadius: 6,
       }}]
     }},
@@ -631,7 +630,7 @@ BUILDINGS.forEach(en => {{
           {{ label: '資料點', data: sAct.map((a,i)=>({{x:a,y:sPre[i]}})),
              backgroundColor: C.scatter + '44', pointRadius: 3 }},
           {{ label: '45°線', data: [{{x:minV,y:minV}},{{x:maxV,y:maxV}}],
-             type:'line', borderColor:'#f87171', borderWidth:1.5, pointRadius:0, borderDash:[4,3] }}
+             type:'line', borderColor:'#fedfb2', borderWidth:1.5, pointRadius:0, borderDash:[4,3] }}
         ]
       }},
       options: {{
@@ -700,7 +699,7 @@ BUILDINGS.forEach(en => {{
       data: {{
         labels,
         datasets: [{{ label: '頻次', data: h.counts,
-          backgroundColor: '#fb923c55', borderColor: '#fb923c', borderWidth: 1 }}]
+          backgroundColor: '#9d94c055', borderColor: '#9d94c0', borderWidth: 1 }}]
       }},
       options: {{
         responsive: true, maintainAspectRatio: false,
@@ -730,10 +729,10 @@ BUILDINGS.forEach(en => {{
       data: {{
         datasets: [
           {{ label: '殘差', data: pred_s.map((p,i)=>({{x:p,y:resid_s[i]}})),
-             backgroundColor: '#fb923c44', pointRadius: 3 }},
+             backgroundColor: '#fedfb244', pointRadius: 3 }},
           {{ label: '零線', data: [
               {{x:Math.min(...pred_s), y:0}}, {{x:Math.max(...pred_s), y:0}}],
-             type:'line', borderColor:'#f87171', borderWidth:1.5, pointRadius:0, borderDash:[4,3] }}
+             type:'line', borderColor:'#fedfb2', borderWidth:1.5, pointRadius:0, borderDash:[4,3] }}
         ]
       }},
       options: {{
@@ -760,7 +759,7 @@ makeTabs('coef-tabs', 'coef-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
 
   const rows = coefs.map(c => {{
     const isConst  = c.Variable === 'const';
-    const dir      = c.Coef >= 0 ? '#4ade80' : '#f87171';
+    const dir      = c.Coef >= 0 ? '#e6922b' : '#9d94c0';
     const sigClass = c.sig === '***' ? 'sig-high' : (c.sig === 'n.s.' ? 'sig-low' : 'sig-mid');
     const coefStr  = (c.Coef >= 0 ? '+' : '') + c.Coef.toFixed(4);
     const varStyle = isConst
@@ -811,37 +810,37 @@ makeTabs('coef-tabs', 'coef-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
       &nbsp;=&nbsp;
       <span style="color:var(--muted)">β<sub>0</sub></span>
       &nbsp;+&nbsp;
-      <span style="color:#60a5fa">β<sub>1</sub></span>·Temp_c<sub>it</sub>
+      <span style="color:#9d94c0">β<sub>1</sub></span>·Temp_c<sub>it</sub>
       &nbsp;+&nbsp;
-      <span style="color:#4ade80">β<sub>2</sub></span>·BigC<sub>it</sub>
+      <span style="color:#e6922b">β<sub>2</sub></span>·BigC<sub>it</sub>
       &nbsp;+&nbsp;
-      <span style="color:#4ade80">β<sub>3</sub></span>·SmallC<sub>it</sub>
+      <span style="color:#e6922b">β<sub>3</sub></span>·SmallC<sub>it</sub>
       &nbsp;+&nbsp;
-      <span style="color:#a78bfa">β<sub>4</sub></span>·(Temp_c × BigC)<sub>it</sub>
+      <span style="color:#fedfb2">β<sub>4</sub></span>·(Temp_c × BigC)<sub>it</sub>
       &nbsp;+&nbsp;
-      <span style="color:#a78bfa">β<sub>5</sub></span>·(Temp_c × SmallC)<sub>it</sub>
+      <span style="color:#fedfb2">β<sub>5</sub></span>·(Temp_c × SmallC)<sub>it</sub>
       &nbsp;+&nbsp;
-      <span style="color:#fb923c">γ<sub>m</sub></span>
+      <span style="color:#c4b0d8">γ<sub>m</sub></span>
       &nbsp;+&nbsp;
-      <span style="color:#f472b6">δ<sub>h</sub></span>
+      <span style="color:#c4b0d8">δ<sub>h</sub></span>
       &nbsp;+&nbsp;
       ε<sub>it</sub>
     </div>
 
     <!-- 變數說明 badges -->
     <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
-      <div style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.3);
+      <div style="background:rgba(157,148,192,.1);border:1px solid rgba(157,148,192,.3);
                   border-radius:8px;padding:8px 12px;min-width:180px">
-        <div style="font-size:10px;color:#60a5fa;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
+        <div style="font-size:10px;color:#9d94c0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
           溫度項
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6">
           <b>Temp_c</b>：氣溫 − 25°C（中心化）<br>
         </div>
       </div>
-      <div style="background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);
+      <div style="background:rgba(230,146,43,.1);border:1px solid rgba(230,146,43,.3);
                   border-radius:8px;padding:8px 12px;min-width:180px">
-        <div style="font-size:10px;color:#4ade80;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
+        <div style="font-size:10px;color:#e6922b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
           教室使用
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6">
@@ -849,9 +848,9 @@ makeTabs('coef-tabs', 'coef-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
           <b>SmallC</b>：同時段小教室使用間數
         </div>
       </div>
-      <div style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);
+      <div style="background:rgba(254,223,178,.1);border:1px solid rgba(254,223,178,.3);
                   border-radius:8px;padding:8px 12px;min-width:180px">
-        <div style="font-size:10px;color:#a78bfa;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
+        <div style="font-size:10px;color:#fedfb2;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
           交乘項
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6">
@@ -859,9 +858,9 @@ makeTabs('coef-tabs', 'coef-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
           <b>Temp_c × SmallC</b>：溫度對小教室用電的異質效果
         </div>
       </div>
-      <div style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);
+      <div style="background:rgba(63,17,99,.2);border:1px solid rgba(63,17,99,.5);
                   border-radius:8px;padding:8px 12px;min-width:180px">
-        <div style="font-size:10px;color:#fb923c;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
+        <div style="font-size:10px;color:#c4b0d8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">
           Fixed Effects
         </div>
         <div style="font-size:12px;color:var(--text);line-height:1.6">
@@ -884,8 +883,8 @@ makeTabs('coef-tabs', 'coef-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
   <div class="card">
     <div style="margin-bottom:12px;font-size:12px;color:var(--muted)">
       *** p&lt;0.001 &nbsp;** p&lt;0.01 &nbsp;* p&lt;0.05 &nbsp;n.s. 不顯著 &nbsp;·&nbsp;
-      <span style="color:#4ade80">▌</span> 正向用電 &nbsp;
-      <span style="color:#f87171">▌</span> 負向用電
+      <span style="color:#e6922b">▌</span> 正向用電 &nbsp;
+      <span style="color:#9d94c0">▌</span> 負向用電
     </div>
     <table class="coef-table">
       <thead><tr>
@@ -918,7 +917,7 @@ makeTabs('scen-tabs', 'scen-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
 
   // 建築名稱下方的期間說明（三棟都有，普通館橘色警示）
   const periodNote = isPartial
-    ? `<div style="font-size:12px;color:#fb923c;font-style:italic;margin-bottom:20px;
+    ? `<div style="font-size:12px;color:#e6922b;font-style:italic;margin-bottom:20px;
                    display:flex;align-items:center;gap:6px">
          <span>⚠</span>
          <span>資料僅含 11–12 月（共 ${{testDays}} 天）— 9–10 月因品質問題已排除，<strong>不宜直接與其他棟比較</strong></span>
@@ -931,7 +930,6 @@ makeTabs('scen-tabs', 'scen-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
     <div class="sc-card">
       <div class="sc-n">少開 <strong style="color:#fff;font-size:18px">${{s.reduce_n}}</strong> 間大教室</div>
       <div class="sc-kwh">${{s.total_kwh.toLocaleString(undefined,{{maximumFractionDigits:0}})}} kWh</div>
-      <div class="sc-ntd">≈ NT$ ${{s.total_ntd.toLocaleString()}}</div>
       <div class="sc-day">測試期 ${{s.test_days}} 天 · 日均省 ${{s.avg_per_day.toFixed(1)}} kWh</div>
     </div>`).join('');
 
@@ -942,7 +940,7 @@ makeTabs('scen-tabs', 'scen-panels', BUILDINGS, en => CH[en] + ' 教學館', en 
       測試期最大節電潛力（少開 ${{heroItem.reduce_n}} 間）
     </div>
     <div class="scenario-big">${{heroItem.total_kwh.toLocaleString(undefined,{{maximumFractionDigits:0}})}} kWh</div>
-    <div class="scenario-label">≈ NT$ ${{heroItem.total_ntd.toLocaleString()}} · 相當於減少 ${{(heroItem.total_kwh * 0.509).toFixed(0)}} kg CO₂</div>
+    <div class="scenario-label">相當於減少 ${{(heroItem.total_kwh * 0.509).toFixed(0)}} kg CO₂</div>
   </div>
   <div class="scenario-cards">${{filteredCards}}</div>
   <div class="card" style="margin-top:20px">
@@ -968,8 +966,8 @@ BUILDINGS.forEach(en => {{
       datasets: [{{
         label: '省電量 (kWh)',
         data: kwhs,
-        backgroundColor: ['#4ade8066','#4ade8099','#4ade80cc'],
-        borderColor: '#4ade80', borderWidth: 1.5, borderRadius: 8,
+        backgroundColor: ['#3f116366','#9d94c099','#fedfb266','#e6922bcc'],
+        borderColor: '#e6922b', borderWidth: 1.5, borderRadius: 8,
       }}]
     }},
     options: {{
@@ -977,7 +975,7 @@ BUILDINGS.forEach(en => {{
       plugins: {{
         legend: {{ display: false }},
         tooltip: {{ callbacks: {{ label: ctx =>
-          ` ${{ctx.parsed.y.toLocaleString()}} kWh ≈ NT$ ${{(ctx.parsed.y * {ELECTRICITY_PRICE_NTD}).toLocaleString(undefined,{{maximumFractionDigits:0}})}}` }} }}
+          ` ${{ctx.parsed.y.toLocaleString()}} kWh` }} }}
       }},
       scales: {{
         x: {{ grid: {{ display: false }} }},

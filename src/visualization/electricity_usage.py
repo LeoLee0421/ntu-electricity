@@ -37,25 +37,23 @@ TARGET_PERIODS = [str(i) for i in range(1, 11)]
 # ── 學期定義 ──────────────────────────────────────────────────
 SEMESTERS = {
     "113 上學期\n(2024/09–12)": ("2024-09-02", "2024-12-20"),
-    "113 下學期\n(2025/02–06)": ("2025-02-24", "2025-06-06"),
-    "114 上學期\n(2025/09–12)":    ("2025-09-01", "2025-12-19"),
+    "114 上學期\n(2025/09–12)": ("2025-09-01", "2025-12-19"),
 }
 SEM_KEYS  = list(SEMESTERS.keys())
-SEM_COLOR = {"113 上學期\n(2024/09–12)": "#5b8db8",
-             "113 下學期\n(2025/02–06)": "#4aab82",
-             "114 上學期\n(2025/09–12)": "#e07b54"}
+SEM_COLOR = {"113 上學期\n(2024/09–12)": "#3f1163",
+             "114 上學期\n(2025/09–12)": "#e6922b"}
 
-# ── 建立 3×3 Figure（列=建築, 欄=學期），共用每列的 Y 軸 ──────
+# ── 建立 2×3 Figure（列=學期, 欄=建築），共用每欄的 Y 軸 ──────
 fig, axes = plt.subplots(
-    3, 3,
-    figsize=(15, 9),
-    sharey='row',   # 同一列（同棟建築）共用 Y 軸
-    sharex=False    # 各學期 X 軸獨立
+    2, 3,
+    figsize=(14, 7),
+    sharey='col',   # 同一欄（同棟建築）共用 Y 軸
+    sharex=False    # 各格 X 軸獨立
 )
 fig.suptitle("各棟建築各學期日均用電量（第 1–10 節，排除假日）",
              fontsize=14, fontweight='bold', y=1.01)
 
-for row_i, (ch_name, en_name) in enumerate(BUILDING_MAP.items()):
+for col_j, (ch_name, en_name) in enumerate(BUILDING_MAP.items()):
     file_path = os.path.join(PROCESSED_FOLDER, f"{en_name}_final_combined_alltime.csv")
     if not os.path.exists(file_path):
         print(f"找不到檔案: {en_name}")
@@ -69,7 +67,7 @@ for row_i, (ch_name, en_name) in enumerate(BUILDING_MAP.items()):
     is_not_holiday = ~df['DateTime'].dt.normalize().isin(HOLIDAY_TS)
     df = df[is_not_holiday & df['Period'].isin(TARGET_PERIODS)].copy()
 
-    for col_j, sem_label in enumerate(SEM_KEYS):
+    for row_i, sem_label in enumerate(SEM_KEYS):
         start, end = SEMESTERS[sem_label]
         ax = axes[row_i][col_j]
 
@@ -87,7 +85,7 @@ for row_i, (ch_name, en_name) in enumerate(BUILDING_MAP.items()):
         daily_df = sem_df.groupby('Date', as_index=False)['Electricity'].mean()
 
         # 儲存 CSV（每棟×每學期）
-        sem_tag = ["train_s1", "train_s2", "test"][col_j]
+        sem_tag = ["train_s1", "test"][row_i]
         csv_name = f"{en_name}_{sem_tag}_daily_usage.csv"
         daily_df.to_csv(os.path.join(RESULT_FOLDER, csv_name), index=False)
 
@@ -106,18 +104,18 @@ for row_i, (ch_name, en_name) in enumerate(BUILDING_MAP.items()):
         ax.grid(True, linestyle=':', alpha=0.5)
         ax.set_xlabel("")
 
-        # 標題：只在第一列顯示學期，只在第一欄顯示建築
+        # 標題：只在第一列顯示建築名，只在第一欄顯示學期
         if row_i == 0:
-            ax.set_title(sem_label, fontsize=10, fontweight='bold', color=color)
-        if col_j == 0:
             building_label = ch_name if _cjk_font else en_name
-            ax.set_ylabel(f"{building_label}\nkWh", fontsize=10, fontweight='bold')
+            ax.set_title(building_label, fontsize=10, fontweight='bold', color=color)
+        if col_j == 0:
+            ax.set_ylabel(f"{sem_label}\nkWh", fontsize=10, fontweight='bold')
         else:
             ax.set_ylabel("")
 
 plt.tight_layout()
 
-plot_path = os.path.join(PLOT_FOLDER, "buildings_semester_3x3_comparison.png")
-plt.savefig(plot_path, dpi=200, bbox_inches='tight')
+plot_path = os.path.join(PLOT_FOLDER, "buildings_semester_2x3_comparison.png")
+plt.savefig(plot_path, dpi=200, bbox_inches='tight', transparent=True)
 print(f"已儲存圖表: {plot_path}")
 plt.show()
